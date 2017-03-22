@@ -1,10 +1,11 @@
 package network
 
 import (
-	"github.com/name5566/leaf/log"
 	"net"
 	"sync"
 	"time"
+
+	"github.com/name5566/leaf/log"
 )
 
 type TCPServer struct {
@@ -19,11 +20,12 @@ type TCPServer struct {
 	wgConns         sync.WaitGroup
 
 	// msg parser
-	LenMsgLen    int
-	MinMsgLen    uint32
-	MaxMsgLen    uint32
-	LittleEndian bool
-	msgParser    *MsgParser
+	LenMsgLen      int
+	MinMsgLen      uint32
+	MaxMsgLen      uint32
+	LittleEndian   bool
+	LenMsgLenInMsg bool // if the msg len contain in "header" len
+	msgParser      *MsgParser
 }
 
 func (server *TCPServer) Start() {
@@ -56,6 +58,7 @@ func (server *TCPServer) init() {
 	msgParser := NewMsgParser()
 	msgParser.SetMsgLen(server.LenMsgLen, server.MinMsgLen, server.MaxMsgLen)
 	msgParser.SetByteOrder(server.LittleEndian)
+	msgParser.SetLenMsgLenInMsg(server.LenMsgLenInMsg)
 	server.msgParser = msgParser
 }
 

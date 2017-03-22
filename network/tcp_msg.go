@@ -5,16 +5,18 @@ import (
 	"errors"
 	"io"
 	"math"
+	"strconv"
 )
 
 // --------------
 // | len | data |
 // --------------
 type MsgParser struct {
-	lenMsgLen    int
-	minMsgLen    uint32
-	maxMsgLen    uint32
-	littleEndian bool
+	lenMsgLen      int
+	minMsgLen      uint32
+	maxMsgLen      uint32
+	littleEndian   bool
+	lenMsgLenInMsg bool
 }
 
 func NewMsgParser() *MsgParser {
@@ -61,6 +63,10 @@ func (p *MsgParser) SetByteOrder(littleEndian bool) {
 	p.littleEndian = littleEndian
 }
 
+func (p *MsgParser) SetLenMsgLenInMsg(lenMsgLenInMsg bool) {
+	p.lenMsgLenInMsg = lenMsgLenInMsg
+}
+
 // goroutine safe
 func (p *MsgParser) Read(conn *TCPConn) ([]byte, error) {
 	var b [4]byte
@@ -90,11 +96,15 @@ func (p *MsgParser) Read(conn *TCPConn) ([]byte, error) {
 		}
 	}
 
+	if p.lenMsgLenInMsg {
+		msgLen -= uint32(p.lenMsgLen)
+	}
+
 	// check len
 	if msgLen > p.maxMsgLen {
-		return nil, errors.New("message too long")
+		return nil, errors.New("message too long msgLen:" + strconv.Itoa(int(msgLen)) + " maxMsgLen:" + strconv.Itoa(int(p.maxMsgLen)))
 	} else if msgLen < p.minMsgLen {
-		return nil, errors.New("message too short")
+		return nil, errors.New("message too short msgLen:" + strconv.Itoa(int(msgLen)) + " maxMsgLen:" + strconv.Itoa(int(p.maxMsgLen)))
 	}
 
 	// data
@@ -116,12 +126,16 @@ func (p *MsgParser) Write(conn *TCPConn, args ...[]byte) error {
 
 	// check len
 	if msgLen > p.maxMsgLen {
-		return errors.New("message too long")
+		return errors.New("message too long msgLen:" + strconv.Itoa(int(msgLen)) + " maxMsgLen:" + strconv.Itoa(int(p.maxMsgLen)))
 	} else if msgLen < p.minMsgLen {
-		return errors.New("message too short")
+		return errors.New("message too short msgLen:" + strconv.Itoa(int(msgLen)) + " maxMsgLen:" + strconv.Itoa(int(p.maxMsgLen)))
 	}
 
 	msg := make([]byte, uint32(p.lenMsgLen)+msgLen)
+
+	if p.lenMsgLenInMsg {
+		msgLen += uint32(p.lenMsgLen)
+	}
 
 	// write len
 	switch p.lenMsgLen {

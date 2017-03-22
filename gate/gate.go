@@ -1,12 +1,13 @@
 package gate
 
 import (
-	"github.com/name5566/leaf/chanrpc"
-	"github.com/name5566/leaf/log"
-	"github.com/name5566/leaf/network"
 	"net"
 	"reflect"
 	"time"
+
+	"github.com/name5566/leaf/chanrpc"
+	"github.com/name5566/leaf/log"
+	"github.com/name5566/leaf/network"
 )
 
 type Gate struct {
@@ -23,9 +24,10 @@ type Gate struct {
 	KeyFile     string
 
 	// tcp
-	TCPAddr      string
-	LenMsgLen    int
-	LittleEndian bool
+	TCPAddr        string
+	LenMsgLen      int
+	LittleEndian   bool
+	LenMsgLenInMsg bool
 }
 
 func (gate *Gate) Run(closeSig chan bool) {
@@ -57,6 +59,7 @@ func (gate *Gate) Run(closeSig chan bool) {
 		tcpServer.LenMsgLen = gate.LenMsgLen
 		tcpServer.MaxMsgLen = gate.MaxMsgLen
 		tcpServer.LittleEndian = gate.LittleEndian
+		tcpServer.LenMsgLenInMsg = gate.LenMsgLenInMsg
 		tcpServer.NewAgent = func(conn *network.TCPConn) network.Agent {
 			a := &agent{conn: conn, gate: gate}
 			if gate.AgentChanRPC != nil {
