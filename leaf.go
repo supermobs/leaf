@@ -11,10 +11,10 @@ import (
 	"github.com/name5566/leaf/module"
 )
 
-var ServerName = ""
+var serverName = ""
 
 func RunWithName(name string, mods ...module.Module) {
-	ServerName = name
+	serverName = name
 	Run(mods[0:]...)
 }
 
@@ -41,7 +41,7 @@ func Run(mods ...module.Module) {
 	// console
 	console.Init()
 
-	log.Release(">>>>>>>>>>>>>>>> %s Leaf-%v starting up! <<<<<<<<<<<<<<<<<", ServerName, version)
+	log.Release(">>>>>>>>>>>>>>>> %s Leaf-%v starting up! <<<<<<<<<<<<<<<<<", serverName, version)
 
 	// close
 	c := make(chan os.Signal, 1)
