@@ -1,4 +1,4 @@
-package base
+package comm
 
 import (
 	"github.com/name5566/leaf/chanrpc"
