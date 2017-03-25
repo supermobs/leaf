@@ -15,7 +15,7 @@ var serverName = ""
 
 func RunWithName(name string, mods ...module.Module) {
 	serverName = name
-	Run(mods[0:]...)
+	Run(mods[:]...)
 }
 
 func Run(mods ...module.Module) {
