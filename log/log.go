@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"path"
-	"runtime"
 	"strings"
 	"time"
 )
