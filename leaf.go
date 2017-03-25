@@ -1,13 +1,14 @@
 package leaf
 
 import (
+	"os"
+	"os/signal"
+
 	"github.com/name5566/leaf/cluster"
 	"github.com/name5566/leaf/conf"
 	"github.com/name5566/leaf/console"
 	"github.com/name5566/leaf/log"
 	"github.com/name5566/leaf/module"
-	"os"
-	"os/signal"
 )
 
 func Run(mods ...module.Module) {
@@ -21,8 +22,6 @@ func Run(mods ...module.Module) {
 		defer logger.Close()
 	}
 
-	log.Release("Leaf %v starting up", version)
-
 	// module
 	for i := 0; i < len(mods); i++ {
 		module.Register(mods[i])
@@ -34,6 +33,8 @@ func Run(mods ...module.Module) {
 
 	// console
 	console.Init()
+
+	log.Release(">>>>>>>>>>>>>>>>Leaf %v starting up!<<<<<<<<<<<<<<<<<", version)
 
 	// close
 	c := make(chan os.Signal, 1)
