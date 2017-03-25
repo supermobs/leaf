@@ -11,6 +11,13 @@ import (
 	"github.com/name5566/leaf/module"
 )
 
+var ServerName = ""
+
+func RunWithName(name string, mods ...module.Module) {
+	ServerName = name
+	Run(mods[0:]...)
+}
+
 func Run(mods ...module.Module) {
 	// logger
 	if conf.LogLevel != "" {
@@ -34,7 +41,7 @@ func Run(mods ...module.Module) {
 	// console
 	console.Init()
 
-	log.Release(">>>>>>>>>>>>>>>>Leaf %v starting up!<<<<<<<<<<<<<<<<<", version)
+	log.Release(">>>>>>>>>>>>>>>> %s Leaf-%v starting up! <<<<<<<<<<<<<<<<<", ServerName, version)
 
 	// close
 	c := make(chan os.Signal, 1)
